@@ -1,0 +1,74 @@
+
+services:
+
+  # PostgreSQL
+  postgres:
+    image: postgres:17
+    container_name: product-catalog-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be configured}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d order_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - food-network
+
+
+  # Order Service
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: order-service
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SERVER_PORT: 8080
+
+      # PostgreSQL connection
+      DB_URL: jdbc:postgresql://postgres:5432/order_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # JPA
+      DDL_AUTO: update
+
+      # Other microservices
+      CATALOG_SERVICE_URL: ${CATALOG_SERVICE_URL:-http://host.docker.internal:8081}
+      DELIVERY_SERVICE_URL: ${DELIVERY_SERVICE_URL:-http://host.docker.internal:8082}
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    networks:
+      - food-network
+
+
+volumes:
+  postgres_data:
+
+networks:
+  food-network:
+    driver: bridge
