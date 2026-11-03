@@ -10,6 +10,8 @@ public record CartResponse(
 
         UUID id,
 
+        UUID restaurantId,
+
         CartStatus status,
 
         List<CartItemResponse> items,

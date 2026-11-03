@@ -68,6 +68,11 @@ public class Order {
 
     @Column(name = "customer_phone", nullable = false, length = 30)
     private String customerPhone;
+    @Column(name = "restaurant_id", nullable = false)
+    private UUID restaurantId;
+
+    @Column(name = "restaurant_name", nullable = false)
+    private String restaurantName;
 
     @OneToMany(
             mappedBy = "order",
@@ -92,7 +97,9 @@ public class Order {
             BigDecimal deliveryFee,
             BigDecimal totalAmount,
             String deliveryAddress,
-            String customerPhone
+            String customerPhone,
+            UUID restaurantId,
+            String restaurantName
     ) {
         this.sourceCart = sourceCart;
         this.customerId = customerId;
@@ -101,6 +108,8 @@ public class Order {
         this.totalAmount = totalAmount;
         this.deliveryAddress = deliveryAddress;
         this.customerPhone = customerPhone;
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
         this.status = OrderStatus.PENDING;
     }
 

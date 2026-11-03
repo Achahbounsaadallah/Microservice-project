@@ -42,11 +42,15 @@ public class Cart {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "restaurant_id", nullable = false)
+    private UUID restaurantId;
+
     protected Cart() {
     }
 
-    public Cart(UUID customerId) {
+    public Cart(UUID customerId, UUID restaurantId) {
         this.customerId = customerId;
+        this.restaurantId = restaurantId;
         this.status = CartStatus.ACTIVE;
     }
 
@@ -82,6 +86,10 @@ public class Cart {
         this.status = CartStatus.CONVERTED;
     }
 
+    public void changeRestaurant(UUID restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     // Getters
 
     public UUID getId() {
@@ -106,5 +114,8 @@ public class Cart {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+    public UUID getRestaurantId() {
+        return restaurantId;
     }
 }

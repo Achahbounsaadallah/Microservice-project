@@ -124,7 +124,17 @@ public class OrderServiceImpl implements OrderService {
         // 7. Calculate total
         BigDecimal totalAmount = subtotal.add(deliveryFee);
 
-        // 8. Create Order
+        // 8. Verify the restaurant still exists and is open
+        CatalogRestaurantResponse restaurant =
+                catalogClient.getRestaurant(cart.getRestaurantId());
+
+        if (!restaurant.active()) {
+            throw new MealUnavailableException(
+                    "This restaurant is not accepting orders at the moment"
+            );
+        }
+
+        // 9. Create Order
         Order order = new Order(
                 cart,
                 customerId,
@@ -132,7 +142,9 @@ public class OrderServiceImpl implements OrderService {
                 deliveryFee,
                 totalAmount,
                 request.deliveryAddress(),
-                request.customerPhone()
+                request.customerPhone(),
+                restaurant.id(),
+                restaurant.name()
         );
 
         // 9. Attach items to order

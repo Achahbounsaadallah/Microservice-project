@@ -23,11 +23,18 @@ public class CartController {
     // Create or retrieve current cart
     @PostMapping("/current")
     public ResponseEntity<CartResponse> createOrGetCart(
-            @RequestHeader("X-Customer-Id") UUID customerId
+
+            @RequestHeader("X-Customer-Id") UUID customerId,
+
+            @Valid @RequestBody CreateCcd producartRequest request
+
     ) {
 
         return ResponseEntity.ok(
-                cartService.createOrGetCart(customerId)
+                cartService.createOrGetCart(
+                        customerId,
+                        request.restaurantId()
+                )
         );
     }
 
