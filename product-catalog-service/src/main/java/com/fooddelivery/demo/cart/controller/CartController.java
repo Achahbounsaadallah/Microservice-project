@@ -26,7 +26,7 @@ public class CartController {
 
             @RequestHeader("X-Customer-Id") UUID customerId,
 
-            @Valid @RequestBody CreateCcd producartRequest request
+            @Valid @RequestBody CreateCartRequest request
 
     ) {
 
